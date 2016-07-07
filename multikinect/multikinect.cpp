@@ -11,7 +11,7 @@ Freenect2 *freenect2;
 
 SyncMultiFrameListener** listenerList;
 Freenect2Device** deviceList;
-FrameMap** frameList;
+FrameMap* frameList;
 
 int numDevices;
 
@@ -28,7 +28,7 @@ void MultiKinect::Open()
 {
 	deviceList = new Freenect2Device*[numDevices];
 	listenerList = new SyncMultiFrameListener*[numDevices];
-	frameList = new FrameMap*[numDevices];
+	frameList = new FrameMap[numDevices];
 
 
 	// walk through the devices and add them
@@ -47,20 +47,19 @@ void MultiKinect::Open()
 
 void MultiKinect::Start()
 {
-
+	for (int i = 0; i < numDevices; i++)
+	{
+		deviceList[i]->start();
+	}
 }
 
 bool MultiKinect::WaitForNextFrames()
 {
-	int numFramesReceived = 0;
-	while (numFramesReceived < numDevices)
+	for (int i = 0; i < numDevices; i++)
 	{
-		for (int i = 0; i < numDevices; i++)
-		{
-			numFramesReceived += listenerList[i]->hasNewFrame();
-		}
+		listenerList[i]->waitForNewFrame(frameList[i]);
 	}
-	
+
 	return true;
 }
 
@@ -69,7 +68,31 @@ int MultiKinect::GetNumDevices()
 	return numDevices;
 }
 
-FrameMap ** MultiKinect::GetFrames()
+FrameMap * MultiKinect::GetFrames()
 {
 	return frameList;
+}
+
+void MultiKinect::ReleaseFrames()
+{
+	for (int i = 0; i < numDevices; i++)
+	{
+		listenerList[i]->release(frameList[i]);
+	}
+}
+
+void MultiKinect::Stop()
+{
+	for (int i = 0; i < numDevices; i++)
+	{
+		deviceList[i]->stop();
+	}
+}
+
+void MultiKinect::Close()
+{
+	for (int i = 0; i < numDevices; i++)
+	{
+		deviceList[i]->close();
+	}
 }

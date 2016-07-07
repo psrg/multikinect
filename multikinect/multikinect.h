@@ -25,7 +25,10 @@ public:
 	void Start();
 	bool WaitForNextFrames();
 	int GetNumDevices();
-	FrameMap** GetFrames();
+	FrameMap* GetFrames();
+	void ReleaseFrames();
+	void Stop();
+	void Close();
 };
 
 class MULTIKINECT_API FrameSet {

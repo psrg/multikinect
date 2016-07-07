@@ -201,7 +201,7 @@ bool Viewer::render()
         gl()->glEnableVertexAttribArray(texcoord_attr);
 
 
-        if (iter->first == "RGB" || iter->first == "registered")
+        if (iter->first.find("RGB") != std::string::npos || iter->first == "registered")
         {
             renderShader.use();
 
