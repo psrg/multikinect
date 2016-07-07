@@ -19,7 +19,6 @@ int numDevices;
 // see multikinect.h for the class definition
 MultiKinect::MultiKinect()
 {
-
 	freenect2 = new Freenect2();
 	setGlobalLogger(createConsoleLogger(Logger::Info));
 	numDevices = freenect2->enumerateDevices();

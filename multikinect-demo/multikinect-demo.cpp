@@ -5,19 +5,17 @@
 #include "multikinect.h"
 #include <iostream>
 #include "viewer.h"
-int main()
+#include "multikinect-demo.h"
+int main(int argc, char *argv[])
 {
-	Viewer viewer;
-	viewer.initialize();
-
-
 	MultiKinect multikinect;
-	
 	int numDevices = multikinect.GetNumDevices();
-	
+
 	multikinect.Open();
 	multikinect.Start();
 
+	Viewer viewer;
+	viewer.initialize();
 
 	if (multikinect.WaitForNextFrames())
 	{
