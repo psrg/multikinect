@@ -1,11 +1,5 @@
 #pragma once
 
-// The following ifdef block is the standard way of creating macros which make exporting 
-// from a DLL simpler. All files within this DLL are compiled with the MULTIKINECT_EXPORTS
-// symbol defined on the command line. This symbol should not be defined on any project
-// that uses this DLL. This way any other project whose source files include this file see 
-// MULTIKINECT_API functions as being imported from a DLL, whereas this DLL sees symbols
-// defined with this macro as being exported.
 #ifdef MULTIKINECT_EXPORTS
 #define MULTIKINECT_API __declspec(dllexport)
 #else
@@ -17,23 +11,81 @@
 using namespace std;
 using namespace libfreenect2;
 
-// This class is exported from the multikinect.dll
-class MULTIKINECT_API MultiKinect {
-public:
-	MultiKinect(void);
-	void Open();
-	void Start();
-	bool WaitForNextFrames();
-	int GetNumDevices();
-	FrameMap* GetFrames();
-	void ReleaseFrames();
-	void Stop();
-	void Close();
-};
-
 class MULTIKINECT_API FrameSet {
 public:
 	Frame* Rgb;
 	Frame* Depth;
 	Frame* Ir;
+};
+
+// This class is exported from the multikinect.dll
+class MULTIKINECT_API MultiKinect {
+public:
+	MultiKinect(void);
+
+	/// <summary>
+	/// Opens all devices to prepare for capture.
+	/// </summary>
+	void Open();
+
+	/// <summary>
+	/// Start capturing frame data. Implicitly calls Open() automatically.
+	/// </summary>
+	void Start();
+
+	/// <summary>
+	/// Blocks execution until the next set of frames arrive, or times out. Implicitly Start()s the stream if not already done.
+	/// </summary>
+	/// <returns>"true" if a set of frames has arrived; "false" if a timeout from any device occurs.</returns>
+	bool WaitForNextFrames();
+
+	/// <summary>
+	/// Gets the number of devices attached to the computer on initialization.
+	/// </summary>
+	/// <returns>The number of devices</returns>
+	int GetNumDevices();
+
+	/// <summary>
+	/// Gets a reference to the frame map
+	/// </summary>
+	/// <returns></returns>
+	FrameSet* GetFrames();
+
+	/// <summary>
+	/// Releases frames from memory.
+	/// </summary>
+	void ReleaseFrames();
+
+	/// <summary>
+	/// Stops capturing data.
+	/// </summary>
+	void Stop();
+
+	/// <summary>
+	/// Close devices. This method will automatically stop() devices if not already done.
+	/// </summary>
+	void Close();
+
+	/// <summary>
+	/// Tests whether the streams have started
+	/// </summary>
+	/// <returns>"true" if started, "false" otherwise</returns>
+	bool IsStarted();
+
+	/// <summary>
+	/// Tests whether the devices are open.
+	/// </summary>
+	/// <returns>"true" if the devices are open.</returns>
+	bool IsOpen();
+
+private:
+	bool isStarted = false;
+	bool isOpen = false;
+	int numDevices = 0;
+	Freenect2 *freenect2;
+	SyncMultiFrameListener** listenerList;
+	Freenect2Device** deviceList;
+	FrameMap* frameMapList;
+	FrameSet* frameSetList;
+	
 };
