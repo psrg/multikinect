@@ -10,13 +10,13 @@
 int main(int argc, char *argv[])
 {
 	MultiKinect multikinect;
-	int numDevices = multikinect.GetNumDevices();
 
 	multikinect.Open();
 	multikinect.Start();
 
 	Viewer viewer;
 	viewer.initialize();
+
 	while (!kbhit())
 	{
 		if (multikinect.WaitForNextFrames())
@@ -33,8 +33,6 @@ int main(int argc, char *argv[])
 	multikinect.Stop();
 	multikinect.Close();
 
-
-	system("pause");
     return 0;
 }
 
